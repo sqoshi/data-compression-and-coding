@@ -9,57 +9,18 @@ public class Driver {
     private static ArrayList<Document> InformationList;
 
 
-    private static void saveResultInFile() {
-        Writer writer = null;
-        try {
-            writer = new BufferedWriter(new OutputStreamWriter(
-                    new FileOutputStream("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/result.txt"), "utf-8"));
-            Collections.sort(getInformationList());
-            writer.write(InformationList.toString());
-        } catch (IOException ex) {
-            // Report
-        } finally {
-            try {
-                writer.close();
-            } catch (Exception ex) {/*ignore*/}
-        }
-    }
-
-    public static ArrayList<Document> getInformationList() {
-        return InformationList;
-    }
-
-    public static void setInformationList(ArrayList<Document> informationList) {
-        InformationList = informationList;
-    }
-
-    public static String[] getData8Bit() {
-        return data8Bit;
-    }
-
-    public static void setData8Bit(String[] data8Bit) {
-        Driver.data8Bit = data8Bit;
-    }
-
-    public static byte[] getData() {
-        return data;
-    }
-
-    public static void setData(byte[] data) {
-        Driver.data = data;
-    }
-
     public static void main(String[] args) throws IOException {
         //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/kod.txt"));
         //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/kod.txt"));
-        loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/kod.txt"));
+        loadFile("kod.txt");
         //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt"));
         to8bit();
         checkDataFrequency();
         Collections.sort(getInformationList());
-        saveResultInFile();
         findAllSymbolsAfter();
         System.out.println(getInformationList().toString());
+        saveResultInFile();
+
     }
 
     private static void findAllSymbolsAfter() {
@@ -142,7 +103,8 @@ public class Driver {
         setData8Bit(help);
     }
 
-    private static void loadFile(File file) throws IOException {
+    private static void loadFile(String filename) throws IOException {
+        File file = new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/" + filename);
         FileInputStream fileStream = new FileInputStream(file);
         byte[] arr = new byte[(int) file.length()];
 
@@ -150,6 +112,47 @@ public class Driver {
         setData(arr);
         Document.symbolsQuantity = getData().length;
     }
+
+    private static void saveResultInFile() {
+        Writer writer = null;
+        try {
+            writer = new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/result.txt"), "utf-8"));
+            Collections.sort(getInformationList());
+            writer.write(InformationList.toString());
+        } catch (IOException ex) {
+            // Report
+        } finally {
+            try {
+                writer.close();
+            } catch (Exception ex) {/*ignore*/}
+        }
+    }
+
+    public static ArrayList<Document> getInformationList() {
+        return InformationList;
+    }
+
+    public static void setInformationList(ArrayList<Document> informationList) {
+        InformationList = informationList;
+    }
+
+    public static String[] getData8Bit() {
+        return data8Bit;
+    }
+
+    public static void setData8Bit(String[] data8Bit) {
+        Driver.data8Bit = data8Bit;
+    }
+
+    public static byte[] getData() {
+        return data;
+    }
+
+    public static void setData(byte[] data) {
+        Driver.data = data;
+    }
+
 
     private static void printAsChar() {
         for (int X : getData()) {

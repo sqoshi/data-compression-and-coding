@@ -65,12 +65,23 @@ public class Document implements Comparable<Document> {
     public String toString() {
         String str = "";
         if (getAfterSymbolList() != null) str = "\n(" + getC() +
-                ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ", \n\u001b[31m" + getAfterSymbolList() + " \u001B[0m)\n";
+                ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ", \u001b[31m" + beautyPrint()+ " \u001B[0m)\n";
         else str = "\n(" + getC() +
                 ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ")";
         return str;
     }
 
+    private String beautyPrint() {
+        StringBuilder stb = new StringBuilder();
+        stb.append("[");
+        for (int i = 0; i < getAfterSymbolList().size(); i++) {
+            stb.append("(").append(getAfterSymbolList().get(i).getC()).append(", ").append(getAfterSymbolList().get(i).getRepetitions()).append(", ").append(getAfterSymbolList().get(i).getAsChar()).append(", ").
+                    append(getAfterSymbolList().get(i).getFrequency()).append(")");
+            if (i != getAfterSymbolList().size() - 1) stb.append(", ");
+            else stb.append("]");
+        }
+        return stb.toString();
+    }
 
     @Override
     public int compareTo(Document o) {
