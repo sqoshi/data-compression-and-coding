@@ -58,9 +58,14 @@ public class Driver {
         checkDataFrequency();
         Collections.sort(getInformationList());
         saveResultInFile();
-        findSymbolsAfter("01101111");
-        findSymbolsAfter("01110000");
+        findAllSymbolsAfter();
         System.out.println(getInformationList().toString());
+    }
+
+    private static void findAllSymbolsAfter() {
+        for (int i = 0; i < getInformationList().size(); i++) {
+            findSymbolsAfter(getInformationList().get(i).getC());
+        }
     }
 
     private static void findSymbolsAfter(String str) {
