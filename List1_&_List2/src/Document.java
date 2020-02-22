@@ -63,11 +63,12 @@ public class Document implements Comparable<Document> {
 
 
     public String toString() {
-        int parseInt = Integer.parseInt(c, 2);
-        char ch = (char) parseInt;
-        return
-                "\n(" + getC() +
-                        ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ", \u001b[31m" + getAfterSymbolList() + "\u001b[37m)";
+        String str = "";
+        if (getAfterSymbolList() != null) str = "\n(" + getC() +
+                ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ", \n\u001b[31m" + getAfterSymbolList() + " \u001B[0m)\n";
+        else str = "\n(" + getC() +
+                ", " + getRepetitions() + ", " + getAsChar() + " , " + getFrequency() + ")";
+        return str;
     }
 
 
