@@ -10,28 +10,64 @@ public class Driver {
 
 
     public static void main(String[] args) throws IOException {
-        //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/kod.txt"));
-        //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/kod.txt"));
         loadFile("kod.txt");
-        //loadFile(new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt"));
         to8bit();
+        System.out.println("1");
         checkDataFrequency();
+        System.out.println("2");
         Collections.sort(getInformationList());
+        System.out.println("3");
         findAllSymbolsAfter();
+        System.out.println("4");
         System.out.println(getInformationList().toString());
+        System.out.println("5");
+        System.out.println(calculateEntrophy());
+        System.out.println(calculateConditionalEntrophy("01110000"));
         saveResultInFile();
 
     }
 
-    private static void findAllSymbolsAfter() {
+    private static double calculateConditionalEntrophy(String str) {
+        int index = -1;
         for (int i = 0; i < getInformationList().size(); i++) {
+            if (getInformationList().get(i).getC().equals(str)) {
+                index = i;
+                break;
+            }
+        }
+        double H = 0;
+        for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
+            H += getInformationList().get(index).getAfterSymbolList().get(i).getFrequency()
+                    * Math.log(getInformationList().get(index).getAfterSymbolList().get(i).getFrequency()) / Math.log(2);
+        }
+        return (-1) * H;
+    }
+
+    private static double calculateEntrophy() {
+        double H = 0;
+        for (int i = 0; i < getInformationList().size(); i++) {
+            H += getInformationList().get(i).getFrequency() * Math.log(getInformationList().get(i).getFrequency()) / Math.log(2);
+        }
+        return (-1) * H;
+    }
+
+    private static void findAllSymbolsAfter() {
+
+        System.out.println(getInformationList().size());
+
+        for (int i = 0; i < getInformationList().size(); i++) {
+            System.out.println(i);//zakomentowanie
             findSymbolsAfter(getInformationList().get(i).getC());
         }
     }
 
+    /***
+     * Metoda jest obszerna z powodu potrzeby wyliczenia ilosci powtorzen danego znaku po str.
+     * Zatem podzielenie go na mniejsze metody prowadzi tylko do skomplikowania kodu.
+     * @param str - konkretny znak po ktorym wyszukiwane sa pozostale znaki, oczywiscie bez potworzen.
+     */
     private static void findSymbolsAfter(String str) {
         ArrayList<String> symbolsAfterList = new ArrayList<>();
-        ArrayList<Document> Result = new ArrayList<>();
         int ctr = 0;
         //tworzenie listy ssymboli wystepujacych po danym symbolu str
         for (int i = 0; i < getData().length; i++) {
@@ -41,7 +77,6 @@ public class Driver {
             }
         }
         //    System.out.println(symbolsAfterList + " " + ctr);
-
         //znalezienie indexu symbolu na liscie glownej
         int index = -1;
         for (int i = 0; i < getInformationList().size();
@@ -63,6 +98,7 @@ public class Driver {
         }
         // System.out.println(getInformationList().get(index).afterSymbolList);
     }
+
 
 
     private static void checkDataFrequency() {
