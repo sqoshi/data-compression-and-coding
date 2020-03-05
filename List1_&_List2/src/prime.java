@@ -1,7 +1,5 @@
 public class prime {
     public static void main(String[] args) {
-        System.out.println(isPrime(11));
-        System.out.println(isPrime(12));
     }
 
     private static boolean isPrime(int n) {
@@ -9,5 +7,25 @@ public class prime {
             if (n % j == 0) return false;
         }
         return true;
+    }
+
+    private static int m(int N) {
+        StringBuilder stringBuilder = new StringBuilder();
+        int zeros = 0;
+        long result = 1;
+        int i = 1;
+        while (i < N) {
+            result *= i;
+            i++;
+        }
+        stringBuilder.append(result);
+
+        if (stringBuilder.
+                substring(stringBuilder.length() - 1).
+                equals("0"))
+            zeros++;
+
+        System.out.println(result);
+        return zeros;
     }
 }

@@ -10,24 +10,56 @@ public class Driver {
 
 
     public static void main(String[] args) throws IOException {
-        loadFile("kod.txt");
+        loadFile("test2.bin");
+        //loadFile("pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt");
+        //loadFile("kod.txt");
         to8bit();
-        System.out.println("1");
         checkDataFrequency();
-        System.out.println("2");
         Collections.sort(getInformationList());
-        System.out.println("3");
         findAllSymbolsAfter();
-        System.out.println("4");
-        System.out.println(getInformationList().toString());
-        System.out.println("5");
-        System.out.println(calculateEntrophy());
-        System.out.println(calculateConditionalEntrophy("01110000"));
-        saveResultInFile();
+        System.out.println("********************************************************************************************************8");
+        System.out.println(calculateEntropy());
+        System.out.println(Arrays.toString(getData8Bit()));
+        System.out.println(entropyCondAsAv());
+    }
+
+    private static double entropyCondAsAv() {
+        double H = 0.0;
+
+        // tu modyfikacja sie zaczyna z tym dodawaniem symbolu do zera
+        int index = -1;
+        float quantity = 0;
+        // szukam znaku 0 na liscie, ale tutaj zakladam, ze zero jest na liscie
+        for (int i = 0; i < getInformationList().size(); i++) {
+            if (getInformationList().get(i).getC().equals("00110000")) { //nie wiem 00000000 00110000
+                System.out.println("JEST NA LISCIE !!!! nie trzeba tworzyc nowego !!");
+                index = i;
+            }
+        }
+        // dodaje do listy  znaku 0 symboli po smybolach symbol pierwszy w naszych danych ktory nie ma poprzednika
+        getInformationList().get(index).getAfterSymbolList().add(new Document(getData8Bit()[0], 1));
+
+        //teraz zliczam ilosc powtorzen po symbolu calkowita  chociaz to nie podobne
+        for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
+            quantity += getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions();
+        }
+
+        //ustawiam nowa czestotliowsc bo doszla jedna zmienna wiec czestostliowsci sie zmieniaja
+        for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
+            getInformationList().get(index).getAfterSymbolList().get(i).setFrequency(
+                    getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions() / quantity);
+        }
+        // tu koniec mofyfikacji z dodawaniem symbolu do znaku zera
+
+        for (int i = 0; i < getInformationList().size(); i++) {
+            H += calculateConditionalEntropy(getInformationList().get(i).getC());
+        }
+
+        return H;
 
     }
 
-    private static double calculateConditionalEntrophy(String str) {
+    private static double calculateConditionalEntropy(String str) {
         int index = -1;
         for (int i = 0; i < getInformationList().size(); i++) {
             if (getInformationList().get(i).getC().equals(str)) {
@@ -35,28 +67,30 @@ public class Driver {
                 break;
             }
         }
+
         double H = 0;
         for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
             H += getInformationList().get(index).getAfterSymbolList().get(i).getFrequency()
-                    * Math.log(getInformationList().get(index).getAfterSymbolList().get(i).getFrequency()) / Math.log(2);
+                    * getInformationList().get(index).getFrequency()
+                    * Math.log(getInformationList().get(index).getAfterSymbolList().get(i).getFrequency())
+                    / Math.log(2);
         }
         return (-1) * H;
     }
 
-    private static double calculateEntrophy() {
-        double H = 0;
+    private static double calculateEntropy() {
+        double H = 0.0;
         for (int i = 0; i < getInformationList().size(); i++) {
-            H += getInformationList().get(i).getFrequency() * Math.log(getInformationList().get(i).getFrequency()) / Math.log(2);
+            H += getInformationList().get(i).getFrequency() * Math.log(
+                    getInformationList().get(i).getFrequency()) / Math.log(2);
         }
         return (-1) * H;
     }
+
 
     private static void findAllSymbolsAfter() {
-
         System.out.println(getInformationList().size());
-
         for (int i = 0; i < getInformationList().size(); i++) {
-            System.out.println(i);//zakomentowanie
             findSymbolsAfter(getInformationList().get(i).getC());
         }
     }
@@ -86,6 +120,12 @@ public class Driver {
         //utworzenie podlisty w liscie glownej w ktorej przetrzymywane beda informacje o czestosciach symboli wystepujacych po symbolu str
         getInformationList().get(index).afterSymbolList = new ArrayList<>();
 
+        // if (zeroFoundIndex == -1) {
+        //     getInformationList().add(new Document("00000000", 0));
+        //     getInformationList().get(zeroFoundIndex).afterSymbolList.add(
+        //             new Document(symbolsAfterList.get(0), 1));
+        // }
+
         for (int i = 0; i < symbolsAfterList.size(); i++) {
             int counter = 1;
             for (int j = 1; j < getData8Bit().length; j++) {
@@ -97,8 +137,8 @@ public class Driver {
             getInformationList().get(index).afterSymbolList.get(getInformationList().get(index).afterSymbolList.size() - 1).setFrequency((float) (counter - 1) / ctr);
         }
         // System.out.println(getInformationList().get(index).afterSymbolList);
-    }
 
+    }
 
 
     private static void checkDataFrequency() {
@@ -107,18 +147,46 @@ public class Driver {
         System.arraycopy(getData8Bit(), 0, help, 0, getData().length);
         Arrays.sort(help);
         int counter = 1;
+
         for (int i = 0; i < help.length; i++) {
-            if (i + 1 == help.length) break;
-            if (help[i].equals(help[i + 1])) {
-                counter++;
+            if (i + 1 == help.length) {
+                if (!isDocInList(resultList, help[i])) {
+                    int c = 1;
+                    for (int j = 0; j < help.length; j++) {
+                        if (getData8Bit()[j].equals(help[i])) {
+                            c++;
+                        }
+                    }
+                    if (c != 1) c--;
+                    resultList.add(new Document(help[i], c));
+                } else {
+                    resultList.get(resultList.size() - 1).setRepetitions(
+                            resultList.get(resultList.size() - 1).getRepetitions() + 1
+                    );
+                }
+            } else {
+                if (help[i].equals(help[i + 1]) && (i + 1 != help.length)) {
+                    counter++;
+                }
+                if (!help[i].equals(help[i + 1]) && (i + 1 != help.length)) {
+                    resultList.add(new Document(help[i], counter));
+                    counter = 1;
+                }
             }
-            if (!help[i].equals(help[i + 1])) {
-                resultList.add(new Document(help[i], counter));
-                counter = 1;
-            }
+
 
         }
         setInformationList(resultList);
+    }
+
+    private static boolean isDocInList(ArrayList<Document> list, String elInBit) {
+        boolean isIn = false;
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).getC().equals(elInBit)) {
+                isIn = true;
+            }
+        }
+        return isIn;
     }
 
     private static void to8bit() {
