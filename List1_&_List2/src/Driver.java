@@ -3,24 +3,25 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
+import static java.lang.Math.round;
+
 public class Driver {
     private static byte[] data;
     private static String[] data8Bit;
     private static ArrayList<Document> InformationList;
+    private static String filename;
 
 
     public static void main(String[] args) throws IOException {
-        loadFile("test2.bin");
-        //loadFile("pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt");
-        //loadFile("kod.txt");
+        filename = "test1.bin";
+        //filename = "pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
+        loadFile(filename);
         to8bit();
         checkDataFrequency();
         Collections.sort(getInformationList());
         findAllSymbolsAfter();
-        System.out.println("********************************************************************************************************8");
         System.out.println(calculateEntropy());
-        System.out.println(Arrays.toString(getData8Bit()));
-        System.out.println(entropyCondAsAv());
+        System.out.println(entropyCondAsA());
     }
 
     private static double entropyCondAsAv() {
@@ -32,29 +33,31 @@ public class Driver {
         // szukam znaku 0 na liscie, ale tutaj zakladam, ze zero jest na liscie
         for (int i = 0; i < getInformationList().size(); i++) {
             if (getInformationList().get(i).getC().equals("00110000")) { //nie wiem 00000000 00110000
-                System.out.println("JEST NA LISCIE !!!! nie trzeba tworzyc nowego !!");
+                //  System.out.println("JEST NA LISCIE !!!! nie trzeba tworzyc nowego !!");
                 index = i;
             }
         }
-        // dodaje do listy  znaku 0 symboli po smybolach symbol pierwszy w naszych danych ktory nie ma poprzednika
-        getInformationList().get(index).getAfterSymbolList().add(new Document(getData8Bit()[0], 1));
+        if (index > -1) {
+            // dodaje do listy  znaku 0 symboli po smybolach symbol pierwszy w naszych danych ktory nie ma poprzednika
+            getInformationList().get(index).getAfterSymbolList().add(new Document(getData8Bit()[0], 1));
 
-        //teraz zliczam ilosc powtorzen po symbolu calkowita  chociaz to nie podobne
-        for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
-            quantity += getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions();
+            //teraz zliczam ilosc powtorzen po symbolu calkowita  chociaz to nie podobne
+            for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
+                quantity += getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions();
+            }
+
+            //ustawiam nowa czestotliowsc bo doszla jedna zmienna wiec czestostliowsci sie zmieniaja
+            for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
+                getInformationList().get(index).getAfterSymbolList().get(i).setFrequency(
+                        getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions() / quantity);
+            }
         }
 
-        //ustawiam nowa czestotliowsc bo doszla jedna zmienna wiec czestostliowsci sie zmieniaja
-        for (int i = 0; i < getInformationList().get(index).getAfterSymbolList().size(); i++) {
-            getInformationList().get(index).getAfterSymbolList().get(i).setFrequency(
-                    getInformationList().get(index).getAfterSymbolList().get(i).getRepetitions() / quantity);
-        }
         // tu koniec mofyfikacji z dodawaniem symbolu do znaku zera
 
         for (int i = 0; i < getInformationList().size(); i++) {
             H += calculateConditionalEntropy(getInformationList().get(i).getC());
         }
-
         return H;
 
     }
@@ -215,6 +218,17 @@ public class Driver {
         fileStream.read(arr, 0, arr.length);
         setData(arr);
         Document.symbolsQuantity = getData().length;
+    }
+
+    static double entropyCondAsA() {
+        double R = 0.0;
+        if (filename.equals("test3.bin")) {
+            R = entropyCondAsAv();
+            R = round(R);
+        } else {
+            R = entropyCondAsAv();
+        }
+        return R;
     }
 
     private static void saveResultInFile() {
