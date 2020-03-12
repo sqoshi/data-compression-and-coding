@@ -3,8 +3,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 
-import static java.lang.Math.round;
-
 public class Driver {
     private static byte[] data;
     private static String[] data8Bit;
@@ -13,18 +11,19 @@ public class Driver {
 
 
     public static void main(String[] args) throws IOException {
-        filename = "test3.bin";
-        //filename = "pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
+        //  filename = "test3.bin";
+        filename = "pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
         loadFile(filename);
         to8bit();
         checkDataFrequency();
         Collections.sort(getInformationList());
+        System.out.println(getInformationList());
         findAllSymbolsAfter();
         System.out.println(calculateEntropy());
-        System.out.println(entropyCondAsA());
+        System.out.println(entropyCondAsAv());
     }
 
-    private static double entropyCondAsAv() {
+    protected static double entropyCondAsAv() {
         double H = 0.0;
 
         // tu modyfikacja sie zaczyna z tym dodawaniem symbolu do zera
@@ -81,7 +80,7 @@ public class Driver {
         return (-1) * H;
     }
 
-    private static double calculateEntropy() {
+    protected static double calculateEntropy() {
         double H = 0.0;
         for (int i = 0; i < getInformationList().size(); i++) {
             H += getInformationList().get(i).getFrequency() * Math.log(
@@ -91,7 +90,7 @@ public class Driver {
     }
 
 
-    private static void findAllSymbolsAfter() {
+    protected static void findAllSymbolsAfter() {
         System.out.println(getInformationList().size());
         for (int i = 0; i < getInformationList().size(); i++) {
             findSymbolsAfter(getInformationList().get(i).getC());
@@ -103,7 +102,7 @@ public class Driver {
      * Zatem podzielenie go na mniejsze metody prowadzi tylko do skomplikowania kodu.
      * @param str - konkretny znak po ktorym wyszukiwane sa pozostale znaki, oczywiscie bez potworzen.
      */
-    private static void findSymbolsAfter(String str) {
+    protected static void findSymbolsAfter(String str) {
         ArrayList<String> symbolsAfterList = new ArrayList<>();
         int ctr = 0;
         //tworzenie listy ssymboli wystepujacych po danym symbolu str
@@ -144,7 +143,7 @@ public class Driver {
     }
 
 
-    private static void checkDataFrequency() {
+    protected static void checkDataFrequency() {
         ArrayList<Document> resultList = new ArrayList<>();
         String[] help = new String[getData().length];
         System.arraycopy(getData8Bit(), 0, help, 0, getData().length);
@@ -192,7 +191,7 @@ public class Driver {
         return isIn;
     }
 
-    private static void to8bit() {
+    protected static void to8bit() {
         String[] help = new String[getData().length];
         StringBuilder str = new StringBuilder();
         int counter = 0;
@@ -210,8 +209,8 @@ public class Driver {
         setData8Bit(help);
     }
 
-    private static void loadFile(String filename) throws IOException {
-        File file = new File("/home/piotr/Documents/data-compression-and-coding/List1_&_List2/src/data/" + filename);
+    public static void loadFile(String filename) throws IOException {
+        File file = new File("/home/piotr/Documents/data-compression-and-coding/List1_and_List2/src/data/" + filename);
         FileInputStream fileStream = new FileInputStream(file);
         byte[] arr = new byte[(int) file.length()];
 
@@ -220,16 +219,6 @@ public class Driver {
         Document.symbolsQuantity = getData().length;
     }
 
-    static double entropyCondAsA() {
-        double R = 0.0;
-        if (filename.equals("test3.bin")) {
-            R = entropyCondAsAv();
-            R = round(R);
-        } else {
-            R = entropyCondAsAv();
-        }
-        return R;
-    }
 
     private static void saveResultInFile() {
         Writer writer = null;
