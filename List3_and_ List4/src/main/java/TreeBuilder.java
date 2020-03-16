@@ -9,11 +9,15 @@ public class TreeBuilder {
         int N = 2 * alphabetLength + 1;
         root = new Node("NYT", 0, N);//NYT
         build(dataCollector);
-        printBinaryTree(root, 0);
         sumWeights(findParent(root, "NYT"));
         printBinaryTree(root, 0);
         performSwaps(findParent(root, "NYT"));
+        System.out.println();
+        //swapsUpDown(root);
         printBinaryTree(root, 0);
+        StringBuilder stb = new StringBuilder();
+        String c = "d";
+        findPath(findParent(root, c), findNode(root, c), stb);
 
 
     }
@@ -24,15 +28,31 @@ public class TreeBuilder {
         printBinaryTree(root.right, level + 1);
         if (level != 0) {
             for (int i = 0; i < level - 1; i++)
-                System.out.print("|\t\t\t\t\t\t\t\t");
-            System.out.println("|------------------------------(" + root.name + ") W: " + root.weight + ", N: " + root.N);
+                System.out.print("|\t\t\t\t\t\t");
+            System.out.println("|-----------------------(" + root.name + ") W: " + root.weight + ", N: " + root.N);
         } else
             System.out.println("(" + root.name + ") W: " + root.weight + ", N: " + root.N);
         printBinaryTree(root.left, level + 1);
     }
 
-    public void performSwaps(Node parent) {
-        if (parent.N <= 2 * alphabetLength + 1) {
+    public void findPath(Node parent, Node child, StringBuilder stb) {
+        if (parent != null)
+            if (parent.N <= 2 * alphabetLength + 1) {
+                if (parent.left.name.equals(child.name)) {
+                    stb.append("0");
+                } else if (parent.right.name.equals(child.name)) {
+                    stb.append("1");
+                }
+                if (parent.N != 2 * alphabetLength + 1)
+                    findPath(findParent(root, parent), parent, stb);
+                if (parent.N == 2 * alphabetLength + 1)
+                    System.out.println(stb.toString());
+            }
+
+    }
+
+    public void swapsUpDown(Node parent) {
+        if (parent.right != null) {
             if (parent.left.weight > parent.right.weight) {
                 Node temp;
                 temp = parent.left;
@@ -40,13 +60,29 @@ public class TreeBuilder {
                 parent.right = temp;
                 parent.left.N -= 1;
                 parent.right.N += 1;
-
             }
-            if (parent.N != 2 * alphabetLength + 1)
-                performSwaps(findParent(root, parent));
+            swapsUpDown(parent.left);
+            swapsUpDown(parent.right);
         }
     }
 
+    public void performSwaps(Node parent) {
+        if (parent.N <= 2 * alphabetLength + 1) {
+                if (parent.left.weight >= parent.right.weight && parent.left.N>3) {
+                    System.out.println(parent.left.N + " swap " + parent.right.N);
+                    Node temp;
+                    temp = parent.left;
+                    parent.left = parent.right;
+                    parent.right = temp;
+                    parent.left.N -= 1;
+                    parent.right.N += 1;
+
+                }
+            if (parent.N != 2 * alphabetLength + 1)
+                performSwaps(findParent(root, parent));
+
+        }
+    }
 
     public void sumWeights(Node parent) {
         if (parent.N <= 2 * alphabetLength + 1) {
@@ -94,8 +130,9 @@ public class TreeBuilder {
         if (root == null) return null;
 
         // Found it!
-        if (root.left.name.equals(query)
-                || root.right.name.equals(query)) {
+        if ((root.left != null && root.right != null)
+                && (root.left.name.equals(query)
+                || root.right.name.equals(query))) {
             System.out.println(root.name + " " + root.N);
             return root;
         }
@@ -140,6 +177,7 @@ public class TreeBuilder {
         if (rightResult != null) return rightResult;
         return null;
     }
+
 
     private void insertElement(Node current, String name) {
         if (current.N - 2 > 0) {
