@@ -9,10 +9,12 @@ public class TreeBuilder {
         int N = 2 * alphabetLength + 1;
         root = new Node("NYT", 0, N);//NYT
         build(dataCollector);
-        sumWeights(findParent(root, "NYT"));
+        //     sumWeights(findParent(root, "NYT"));
         printBinaryTree(root, 0);
-        performSwaps(findParent(root, "NYT"));
+        //       performSwaps(findParent(root, "NYT"));
         System.out.println();
+       // sumWeights(findParent(root, "NYT"));
+        //performSwaps(findParent(root, "NYT"));
         //swapsUpDown(root);
         printBinaryTree(root, 0);
         StringBuilder stb = new StringBuilder();
@@ -68,16 +70,16 @@ public class TreeBuilder {
 
     public void performSwaps(Node parent) {
         if (parent.N <= 2 * alphabetLength + 1) {
-                if (parent.left.weight >= parent.right.weight && parent.left.N>3) {
-                    System.out.println(parent.left.N + " swap " + parent.right.N);
-                    Node temp;
-                    temp = parent.left;
-                    parent.left = parent.right;
-                    parent.right = temp;
-                    parent.left.N -= 1;
-                    parent.right.N += 1;
+            if (parent.left.weight > parent.right.weight/* && parent.left.N>3*/) {//pn>3 >= -> >
+                System.out.println(parent.left.N + " swap " + parent.right.N);
+                Node temp;
+                temp = parent.left;
+                parent.left = parent.right;
+                parent.right = temp;
+                parent.left.N -= 1;
+                parent.right.N += 1;
 
-                }
+            }
             if (parent.N != 2 * alphabetLength + 1)
                 performSwaps(findParent(root, parent));
 
@@ -95,6 +97,13 @@ public class TreeBuilder {
     private void build(DataCollector dataCollector) {
         for (int i = 0; i < dataCollector.getTextInBytes().length; i++) {
             chooseInsertion(String.valueOf((char) (dataCollector.getTextInBytes()[i])));
+            printBinaryTree(root, 0);
+            sumWeights(findParent(root, "NYT"));
+           // performSwaps(findParent(root, "NYT"));
+            printBinaryTree(root, 0);
+            System.out.println("**************************************************************************************************");
+
+
         }
     }
 
@@ -108,9 +117,7 @@ public class TreeBuilder {
         }
         if (value.equals(current.name)) {
             return true;
-        }
-        if (current.right != null && value.equals(current.right.name)) {
-            System.out.println(current.right.N);
+        } else if (current.right != null && value.equals(current.right.name)) {
             return true;
         }
         return containsNodeRecursive(current.left, value);
@@ -122,7 +129,8 @@ public class TreeBuilder {
         } else if (containsNode(name)) {
             Node node = findNode(root, name);
             if (node.name.equals(name))
-                node.weight = node.weight + 1;
+                System.out.println("INC");
+            node.weight = node.weight + 1;
         }
     }
 
@@ -151,7 +159,6 @@ public class TreeBuilder {
         if ((root.left != null && root.right != null)
                 && (root.left.equals(query)
                 || root.right.equals(query))) {
-            System.out.println(root.name + " " + root.N);
             return root;
         }
 
@@ -180,16 +187,17 @@ public class TreeBuilder {
 
 
     private void insertElement(Node current, String name) {
-        if (current.N - 2 > 0) {
-            if (current.name.equals("NYT")) {
-                current.left = new Node("NYT", 0, current.N - 2);
-                current.right = new Node(name, 1, current.N - 1);
-                current.name = "empty";
-            } else {
-                current = current.left;
-                insertElement(current, name);
+        if (current != null)
+            if (current.N - 2 > 0) {
+                if (current.name.equals("NYT")) {
+                    current.left = new Node("NYT", 0, current.N - 2);
+                    current.right = new Node(name, 1, current.N - 1);
+                    current.name = "empty";
+                } else {
+                    current = current.left;
+                    insertElement(current, name);
+                }
             }
-        }
     }
 
     public String convertByteTo8bitStr(byte b) {

@@ -6,8 +6,12 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="List3_and_ List4" />
+        <module name="annoyingThing" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="net" target="1.7" />
+      <module name="SecondTry" target="1.7" />
+    </bytecodeTargetLevel>
   </component>
 </project>
