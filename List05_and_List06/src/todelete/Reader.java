@@ -1,3 +1,5 @@
+package todelete;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -30,8 +32,8 @@ public class Reader {
         this.file = file;
     }
 
-    public Map<String, Integer> generateBasicDictionary() {
-        Map<String, Integer> dictionary = new HashMap<>();
+    public Map<String, String> generateBasicDictionary() {
+        Map<String, String> dictionary = new HashMap<>();
         FileInputStream fileStream = null;
         try {
             fileStream = new FileInputStream(getFile());
@@ -50,7 +52,7 @@ public class Reader {
         while (i < bytesWithRepetitions.length) {
             if (!dictionary.containsKey(String.valueOf((char) bytesWithRepetitions[i]))) {
                 index++;
-                dictionary.put(String.valueOf((char) bytesWithRepetitions[i]), index);
+                dictionary.put(String.valueOf((char) bytesWithRepetitions[i]), String.valueOf(index));
             }
             i++;
         }

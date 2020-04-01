@@ -1,14 +1,19 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+package todelete;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 public class Encoder {
-    private Map<String, Integer> dictionary;
+    private Map<String, String> dictionary;
     private byte[] dataToEncode;
 
-    public Encoder(Map<String, Integer> dictionary, byte[] dataToEncode) {
+    public Encoder(Map<String, String> dictionary, byte[] dataToEncode) {
         this.dictionary = dictionary;
         this.dataToEncode = dataToEncode;
 
@@ -16,16 +21,26 @@ public class Encoder {
 
     public static void saveResultToFile(String fileContent) throws IOException {
 
-        BufferedWriter writer = new BufferedWriter(new FileWriter("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
-        writer.write(fileContent);
-        writer.close();
+        File file = new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code");
+        FileOutputStream fos = null;
+
+        try {
+
+            fos = new FileOutputStream(file);
+
+            // Writes bytes from the specified byte array to this file output stream
+            fos.write(fileContent.getBytes());
+
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        }
     }
 
-    public Map<String, Integer> getDictionary() {
+    public Map<String, String> getDictionary() {
         return dictionary;
     }
 
-    public void setDictionary(Map<String, Integer> dictionary) {
+    public void setDictionary(Map<String, String> dictionary) {
         this.dictionary = dictionary;
     }
 
@@ -46,6 +61,7 @@ public class Encoder {
         StringBuilder stb = new StringBuilder();
         //c := pierwszy symbol wejściowy
         String c = String.valueOf((char) getDataToEncode()[0]);
+        List<Integer> resultSet = new ArrayList<>();
         int i = 1;
         //Dopóki są dane na wejściu:
         while (i < getDataToEncode().length) {
@@ -61,7 +77,7 @@ public class Encoder {
                 //wypisz kod dla c (c znajduje się w słowniku
                 stb.append("").append(getDictionary().get(c));
                 //dodaj ciąg c + s do słownika
-                getDictionary().put(ctd, max(getDictionary()) + 1);
+                getDictionary().put(ctd, String.valueOf(Integer.parseInt(max(getDictionary())) + 1));
                 //przypisz c := s.
                 c = s;
             }

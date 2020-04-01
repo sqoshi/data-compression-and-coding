@@ -1,11 +1,9 @@
 package OtherWay;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
-public class LZW {
+public class LZW2 {
     /**
      * Compress a string to a list of output symbols.
      */
@@ -30,7 +28,13 @@ public class LZW {
             }
         }
         System.out.println(dictionary);
-        // Output the code for w.
+        // SHIT.lzwj.compress.Output the code for w.
+        byte[] filearr = new byte[result.size()];
+        for (int i = 0; i < result.size(); i++) {
+            String c = getKeyByVal(dictionary, result.get(i));
+            System.out.println(c.getBytes() + " " + c);
+        }
+        System.out.println(Arrays.toString(filearr));
         if (!w.equals(""))
             result.add(dictionary.get(w));
         return result;
@@ -68,10 +72,19 @@ public class LZW {
         return result.toString();
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         List<Integer> compressed = compress("abccd_abccd_acd_acd_acd_");
         System.out.println(compressed);
         String decompressed = decompress(compressed);
         System.out.println(decompressed);
+    }
+
+    public static <T, E> T getKeyByVal(Map<T, E> map, E value) {
+        for (Map.Entry<T, E> entry : map.entrySet()) {
+            if (Objects.equals(value, entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
     }
 }
