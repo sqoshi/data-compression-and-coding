@@ -4,9 +4,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.*;
 
-public class LastTry {
+public class LZW {
 
-    public static void compress(byte[] data) {
+    public static List<Integer> compress(byte[] data) {
         int dictSize = 256;
         Map<String, Integer> dictionary = new HashMap<String, Integer>();
         for (int i = 0; i < 256; i++)
@@ -28,19 +28,10 @@ public class LastTry {
         }
         if (!w.equals(""))
             result.add(dictionary.get(w));
-        byte[] filearr = new byte[result.size()];
         System.out.println(result);
-       /* for (int i = 0; i < result.size(); i++) {
-            String c = getKeyByVal(dictionary, result.get(i));
-            System.out.println((c.getBytes()) + " " + c + intToBinary(result.get(i)));
-        }*/
+        return result;
     }
 
-    public static void main(String[] args) throws FileNotFoundException {
-        byte[] uncompressed = read(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/test"));
-        compress(uncompressed);
-
-    }
 
     public static <T, E> T getKeyByVal(Map<T, E> map, E value) {
         for (Map.Entry<T, E> entry : map.entrySet()) {
