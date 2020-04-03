@@ -1,4 +1,5 @@
 public class Elias {
+    static String nextVal;
 
     public static String encode(int number) {
         StringBuilder stb = new StringBuilder();
@@ -29,10 +30,12 @@ public class Elias {
                 }
             }
         }
-
+        if (value.length() > 2)
+            nextVal = value.substring(1);
+        else
+            nextVal = null;
         return num;
     }
-
 
     public static void main(String[] args) {
         String to = (encode(137));
@@ -48,8 +51,13 @@ public class Elias {
         //stb.append(s1);
         // }
         System.out.println(stb.toString());
-        System.out.println(decode(stb.toString()));
-
-
+        System.out.println(decode("11110001010001011011001000"));
+        while (getNextVal() != null)
+            System.out.println(decode(getNextVal()));
     }
+
+    public static String getNextVal() {
+        return nextVal;
+    }
+
 }

@@ -1,5 +1,3 @@
-import OtherWay.LZW2;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -48,14 +46,11 @@ public class Driver {
         for (String i : elias_omega_indexes_coded_binary) {
             elias_omega_indexes_decoded.add(Elias.decode(i));
         }
-        System.out.println((LZW2.decompress(elias_omega_indexes_decoded)));
+        System.out.println((LZW.decompress(elias_omega_indexes_decoded)));
 
 
     }
 
-    static String zeros_remover(String binary) {
-        return "0";
-    }
 
     static byte[] binStringToBytes(String s) {
         StringBuilder stb = new StringBuilder();
