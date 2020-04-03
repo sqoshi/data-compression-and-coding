@@ -67,7 +67,6 @@ public class LZW2 {
             dictionary.put(dictSize++, w + entry.charAt(0));
             w = entry;
         }
-        System.out.println(dictionary);
 
         return result.toString();
     }

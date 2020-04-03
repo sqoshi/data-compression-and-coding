@@ -1,7 +1,3 @@
-import java.util.Arrays;
-
-import static java.lang.Math.ceil;
-
 public class Elias {
 
     public static String encode(int number) {
@@ -38,12 +34,10 @@ public class Elias {
     }
 
 
-
-
     public static void main(String[] args) {
         String to = (encode(137));
-       // byte[] data = binStringToBytes(to);
-       // System.out.println(Arrays.toString(data));
+        // byte[] data = binStringToBytes(to);
+        // System.out.println(Arrays.toString(data));
         // writeBytesTofile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code", data);
         //System.out.println(Arrays.toString(getBytesFromFile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code")));
         //  byte[] get = (getBytesFromFile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));

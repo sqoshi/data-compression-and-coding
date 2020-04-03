@@ -28,7 +28,6 @@ public class LZW {
         }
         if (!w.equals(""))
             result.add(dictionary.get(w));
-        System.out.println(result);
         return result;
     }
 
