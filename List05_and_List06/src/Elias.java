@@ -9,10 +9,8 @@ public class Elias {
             String binary = Integer.toBinaryString(k);
             stb.insert(0, binary);
             k = binary.length() - 1;
-
         }
-
-        return stb.toString();
+        return (stb.toString());
     }
 
     static int decode(String value) {
@@ -37,24 +35,6 @@ public class Elias {
         return num;
     }
 
-    public static void main(String[] args) {
-        String to = (encode(137));
-        // byte[] data = binStringToBytes(to);
-        // System.out.println(Arrays.toString(data));
-        // writeBytesTofile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code", data);
-        //System.out.println(Arrays.toString(getBytesFromFile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code")));
-        //  byte[] get = (getBytesFromFile("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
-        StringBuilder stb = new StringBuilder();
-        // for (byte b : get) {
-        //   String s1 = String.format("%8s", Integer.toBinaryString(b & 0xFF)).replace(' ', '0');
-        // System.out.println(s1);
-        //stb.append(s1);
-        // }
-        System.out.println(stb.toString());
-        System.out.println(decode("11110001010001011011001000"));
-        while (getNextVal() != null)
-            System.out.println(decode(getNextVal()));
-    }
 
     public static String getNextVal() {
         return nextVal;
