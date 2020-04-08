@@ -1,7 +1,14 @@
-public class Elias {
+package IndexesCoding;
+
+public class EliasOmega implements Elias {
     static String nextVal;
 
-    public static String encode(int number) {
+    public static String getNextVal() {
+        return nextVal;
+    }
+
+    @Override
+    public String encode(int number) {
         StringBuilder stb = new StringBuilder();
         stb.append("0");
         int k = number;
@@ -13,7 +20,8 @@ public class Elias {
         return (stb.toString());
     }
 
-    static int decode(String value) {
+    @Override
+    public int decode(String value) {
         int num = 1;
         while (value.length() > 0 && value.charAt(0) == '1') {
             value = value.substring(1);
@@ -28,16 +36,11 @@ public class Elias {
                 }
             }
         }
-        if (value.length() > 2)
+        if (value.length() > 2) {
             nextVal = value.substring(1);
-        else
+        } else
             nextVal = null;
         return num;
-    }
-
-
-    public static String getNextVal() {
-        return nextVal;
     }
 
 }

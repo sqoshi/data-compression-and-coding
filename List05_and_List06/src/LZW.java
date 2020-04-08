@@ -1,6 +1,11 @@
+import DataOperations.Pusher;
+
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class LZW {
 
@@ -30,17 +35,31 @@ public class LZW {
             pusher.push(dictionary.get(w));
         }
         pusher.checkLastByte();
+        System.out.println(dictionary.get("A"));
+        System.out.println(dictionary.get("d"));
+        System.out.println(dictionary.get("Ad"));
         return (result);
     }
 
-    public static String decompress(List<Integer> compressed) {
-        // Build the dictionary.
-        int dictSize = 256;
+    public static <T, E> Set<T> getKey(Map<T, E> map, E value) {
+        return map.entrySet()
+                .stream()
+                .filter(entry -> Objects.equals(entry.getValue(), value))
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toSet());
+    }
+
+    public static String decompress(List<Integer> compressed) throws IOException {
+        FileOutputStream fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/decode"));
+        int dictSize = 257;
         Map<Integer, String> dictionary = new HashMap<Integer, String>();
         for (int i = 0; i < 256; i++)
-            dictionary.put(i, "" + (char) i);
+            dictionary.put(i + 1, "" + (char) i);
 
         String w = "" + (char) (int) compressed.remove(0);
+        for (char c : w.toCharArray()) {
+            fos.write(c);
+        }
         StringBuilder result = new StringBuilder(w);
         for (int k : compressed) {
             String entry;
@@ -52,23 +71,20 @@ public class LZW {
                 throw new IllegalArgumentException("Bad compressed k: " + k);
 
             result.append(entry);
+            for (char c : entry.toCharArray()) {
+                fos.write(c);
+            }
 
-            // Add w+entry[0] to the dictionary.
             dictionary.put(dictSize++, w + entry.charAt(0));
             w = entry;
         }
+        System.out.println(dictionary.get(100));
+        System.out.println(dictionary.get(101));
+        System.out.println(dictionary.get(102));
+        System.out.println(dictionary.get(98));
 
         return result.toString();
     }
 
-
-    public static <T, E> T getKeyByVal(Map<T, E> map, E value) {
-        for (Map.Entry<T, E> entry : map.entrySet()) {
-            if (Objects.equals(value, entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
 
 }
