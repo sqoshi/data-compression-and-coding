@@ -1,7 +1,7 @@
 package DataOperations;
 
+import IndexesCoding.Chooser;
 import IndexesCoding.Elias;
-import IndexesCoding.EliasOmega;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -13,10 +13,10 @@ public class Pusher {
     String queue;
     Elias type;
 
-    public Pusher() throws FileNotFoundException {
+    public Pusher(String name) throws FileNotFoundException {
         fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
         queue = "";
-        type = new EliasOmega();
+        type = Chooser.choose(name);
     }
 
     public String getQueue() {

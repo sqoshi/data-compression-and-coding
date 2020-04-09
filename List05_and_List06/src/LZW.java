@@ -4,13 +4,15 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LZW {
 
-    public static List<Integer> compress(FileInputStream inputStream) throws IOException {
-        Pusher pusher = new Pusher();
+    public static List<Integer> compress(Pusher pusher, String filepath) throws IOException {
+        FileInputStream inputStream = new FileInputStream(new File(filepath));
         int dictSize = 257;
         Map<String, Integer> dictionary = new HashMap<String, Integer>();
         for (int i = 0; i < 256; i++)
@@ -35,22 +37,12 @@ public class LZW {
             pusher.push(dictionary.get(w));
         }
         pusher.checkLastByte();
-        System.out.println(dictionary.get("A"));
-        System.out.println(dictionary.get("d"));
-        System.out.println(dictionary.get("Ad"));
         return (result);
     }
 
-    public static <T, E> Set<T> getKey(Map<T, E> map, E value) {
-        return map.entrySet()
-                .stream()
-                .filter(entry -> Objects.equals(entry.getValue(), value))
-                .map(Map.Entry::getKey)
-                .collect(Collectors.toSet());
-    }
 
     public static String decompress(List<Integer> compressed) throws IOException {
-        FileOutputStream fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/decode"));
+        FileOutputStream fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/decode.jpg"));
         int dictSize = 257;
         Map<Integer, String> dictionary = new HashMap<Integer, String>();
         for (int i = 0; i < 256; i++)
@@ -78,10 +70,6 @@ public class LZW {
             dictionary.put(dictSize++, w + entry.charAt(0));
             w = entry;
         }
-        System.out.println(dictionary.get(100));
-        System.out.println(dictionary.get(101));
-        System.out.println(dictionary.get(102));
-        System.out.println(dictionary.get(98));
 
         return result.toString();
     }

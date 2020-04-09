@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Entrophy {
+public class Entropy {
 
     static double calculate(String filepath) throws IOException {
         int SymbolsQuantity = 1;
@@ -34,9 +34,5 @@ public class Entrophy {
         return H;
     }
 
-    public static void main(String[] args) throws IOException {
-        double res = calculate("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt");
-        System.out.println(res);
-    }
 
 }

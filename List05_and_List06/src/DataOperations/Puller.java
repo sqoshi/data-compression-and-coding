@@ -1,7 +1,8 @@
 package DataOperations;
 
+import IndexesCoding.Chooser;
 import IndexesCoding.Elias;
-import IndexesCoding.EliasOmega;
+import IndexesCoding.MyBuffer;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -12,13 +13,14 @@ import java.util.List;
 
 public class Puller {
     FileInputStream fileInputStream;
+    Elias type;
 
-    public Puller() throws FileNotFoundException {
+    public Puller(String name) throws FileNotFoundException {
         fileInputStream = new FileInputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
+        type = Chooser.choose(name);
     }
 
     public List<Integer> read() throws IOException {
-        Elias type = new EliasOmega();
         StringBuilder stb = new StringBuilder();
         int c = fileInputStream.read();
         while (c != -1) {
@@ -35,16 +37,11 @@ public class Puller {
             stb.append(zerosInserter.toString());
             c = fileInputStream.read();
         }
-        System.out.println("fnished reading");
         List<Integer> indexes = new ArrayList<>();
         int m = type.decode(stb.toString()) - 1;
         indexes.add(m);
-        System.out.println(indexes);
-        System.out.println("decodedElias");
-        System.out.println(stb.toString().length());
-        while (EliasOmega.getNextVal() != null) {
-            System.out.println(EliasOmega.getNextVal().length());
-            m = type.decode(EliasOmega.getNextVal());
+        while (MyBuffer.getNextVal() != null) {
+            m = type.decode(MyBuffer.getNextVal());
             indexes.add(m);
         }
         return indexes;

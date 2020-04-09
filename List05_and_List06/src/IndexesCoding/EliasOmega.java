@@ -1,12 +1,6 @@
 package IndexesCoding;
 
 public class EliasOmega implements Elias {
-    static String nextVal;
-
-    public static String getNextVal() {
-        return nextVal;
-    }
-
     @Override
     public String encode(int number) {
         StringBuilder stb = new StringBuilder();
@@ -37,9 +31,9 @@ public class EliasOmega implements Elias {
             }
         }
         if (value.length() > 2) {
-            nextVal = value.substring(1);
+            MyBuffer.nextVal = value.substring(1);
         } else
-            nextVal = null;
+            MyBuffer.nextVal = null;
         return num;
     }
 

@@ -1,9 +1,14 @@
 package IndexesCoding;
 
-public class Fibbo {
-    static String nextVal;
+public class Fibbo implements Elias {
 
-    public static String getNextVal() {
-        return nextVal;
+    @Override
+    public int decode(String value) {
+        return 0;
+    }
+
+    @Override
+    public String encode(int number) {
+        return null;
     }
 }
