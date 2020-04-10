@@ -35,8 +35,6 @@ public class EliasDelta implements Elias {
         }
         stb.append(Integer.toBinaryString((int) N + 1));
         stb.append(Integer.toBinaryString(number).substring(1));
-        System.out.println(stb.toString());
-
         return stb.toString();
     }
 }

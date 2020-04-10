@@ -9,18 +9,16 @@ public class Driver {
     public static void main(String[] args) throws IOException {
         String filepath = "/home/piotr/Documents/data-compression-and-coding/" +
                 "List05_and_List06/src/Data/" +
-                //"test";
-                //"pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
-                "z14.jpg";
-        String type = "Elias Omega";
+                //        "test";
+                "pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
+        // "z14.jpg";
+        String type = "Fibbo";
 
         Pusher pusher = new Pusher(type);
         Puller puller = new Puller(type);
 
         List<Integer> lis = LZW.compress(pusher, filepath);
-        System.out.println(lis);
         List<Integer> pulled_indexes = puller.read();
-        System.out.println(pulled_indexes);
         while (pulled_indexes.get(pulled_indexes.size() - 1) == 1)
             pulled_indexes.remove(pulled_indexes.size() - 1);
         LZW.decompress(pulled_indexes);
