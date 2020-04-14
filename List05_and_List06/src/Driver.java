@@ -12,7 +12,7 @@ public class Driver {
                 //        "test";
                 "pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt";
         // "z14.jpg";
-        String type = "Fibbo";
+        String type = "Elias Delta";
 
         Pusher pusher = new Pusher(type);
         Puller puller = new Puller(type);

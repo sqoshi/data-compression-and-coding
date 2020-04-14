@@ -1,0 +1,20 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/piotr/Documents/data-compression-and-coding/L3_4/main.cpp
+cstdlib
+-
+fstream
+-
+iostream
+-
+vector
+-
+queue
+-
+

@@ -10,6 +10,7 @@
     <option name="ignoredFiles">
       <set>
         <option value="$PROJECT_DIR$/SecondTry/pom.xml" />
+        <option value="$PROJECT_DIR$/annoyingThing/pom.xml" />
         <option value="$PROJECT_DIR$/net/pom.xml" />
       </set>
     </option>

@@ -1,0 +1,1 @@
+/usr/bin/c++  -g   CMakeFiles/L3_4.dir/main.cpp.o  -o L3_4 

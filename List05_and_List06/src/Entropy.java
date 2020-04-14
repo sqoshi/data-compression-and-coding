@@ -29,7 +29,7 @@ public class Entropy {
         double Pi = 0.0;
         for (Map.Entry<Integer, Integer> entry : symbols.entrySet()) {
             Pi = (double) entry.getValue() / size;
-            H += Pi * Math.log(1 / Pi);
+            H += Pi * Math.log(1.0 / Pi) / Math.log(2.0);
         }
         return H;
     }
