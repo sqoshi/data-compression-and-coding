@@ -1,3 +1,0 @@
-/home/piotr/Documents/data-compression-and-coding/L3_4/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/home/piotr/Documents/data-compression-and-coding/L3_4/cmake-build-debug/CMakeFiles/L3_4.dir
-/home/piotr/Documents/data-compression-and-coding/L3_4/cmake-build-debug/CMakeFiles/edit_cache.dir
