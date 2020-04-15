@@ -8,24 +8,24 @@ class Puller:
     def __init__(self, inp):
         self.input = inp
         self.actualByte = 0
-        self.nbRest = 0
+        self.rest = 0
 
-    def pull(self):
+    def read(self):
         if self.actualByte == -1:
             return -1
-        if self.nbRest == 0:
-            byte = self.input.pull(1)
-            if len(byte) == 0:
+        if self.rest == 0:
+            temp = self.input.read(1)
+            if len(temp) == 0:
                 self.actualByte = -1
                 return -1
-            self.actualByte = byte[0]
-            self.nbRest = 8
-        assert self.nbRest > 0
-        self.nbRest -= 1
-        return (self.actualByte >> self.nbRest) & 1
+            self.actualByte = temp[0]
+            self.rest = 8
+        assert self.rest > 0
+        self.rest -= 1
+        return (self.actualByte >> self.rest) & 1
 
-    def pullNext(self):
-        result = self.pull()
+    def readNext(self):
+        result = self.read()
         if result != -1:
             return result
         else:
@@ -34,35 +34,36 @@ class Puller:
     def close(self):
         self.input.close()
         self.actualByte = -1
-        self.nbRest = 0
+        self.rest = 0
 
 
 class Pusher:
+
     def __init__(self, out):
         self.output = out
         self.actualByte = 0
-        self.nbInserted = 0
+        self.bitsInserted = 0
 
-    def push(self, b):
+    def write(self, b):
         if b not in (0, 1):
-            raise ValueError("zly znak")
+            raise ValueError()
         self.actualByte = (self.actualByte << 1) | b
-        self.nbInserted += 1
-        if self.nbInserted == 8:
+        self.bitsInserted += 1
+        if self.bitsInserted == 8:
             towrite = bytes((self.actualByte,))
-            self.output.push(towrite)
+            self.output.write(towrite)
             self.actualByte = 0
-            self.nbInserted = 0
+            self.bitsInserted = 0
 
     def close(self):
-        while self.nbInserted != 0:
-            self.push(0)
+        while self.bitsInserted != 0:
+            self.write(0)
         self.output.close()
 
 
-class FrequencyTable:
+class AbstractTable:
 
-    def symbolLimes(self):
+    def getSymbolLim(self):
         raise NotImplementedError()
 
     def get(self, symbol):
@@ -84,20 +85,22 @@ class FrequencyTable:
         raise NotImplementedError()
 
 
-class FlatFrequencyTable(FrequencyTable):
+class FlatFrequencyTable(AbstractTable):
 
     def __init__(self, value):
-        self.numSymbols = value
+        if value < 1:
+            raise ValueError()
+        self.symbolsQuantity = value
 
-    def symbolLimes(self):
-        return self.numSymbols
+    def getSymbolLim(self):
+        return self.symbolsQuantity
 
     def get(self, symbol):
         self.inspectSymbol(symbol)
         return 1
 
     def getTotal(self):
-        return self.numSymbols
+        return self.symbolsQuantity
 
     def getLow(self, symbol):
         self.inspectSymbol(symbol)
@@ -108,10 +111,10 @@ class FlatFrequencyTable(FrequencyTable):
         return symbol + 1
 
     def inspectSymbol(self, symbol):
-        if 0 <= symbol < self.numSymbols:
+        if 0 <= symbol < self.symbolsQuantity:
             return
         else:
-            raise ValueError("symbol poza zasiegiem")
+            raise ValueError()
 
     def set(self, symbol, freq):
         raise NotImplementedError()
@@ -120,39 +123,37 @@ class FlatFrequencyTable(FrequencyTable):
         raise NotImplementedError()
 
 
-class SimpleFrequencyTable(FrequencyTable):
-
+class FrequencyTable(AbstractTable):
     def __init__(self, frequencies):
-        if isinstance(frequencies, FrequencyTable):
-            numSymbol = frequencies.symbolLimes()
-            self.frequencies = [frequencies.get(i) for i in range(numSymbol)]
+        if isinstance(frequencies, AbstractTable):
+            symbolLim = frequencies.getSymbolLim()
+            self.frequencies = [frequencies.get(i) for i in range(symbolLim)]
         else:
             self.frequencies = list(frequencies)
 
         if len(self.frequencies) < 1:
-            raise ValueError("nie wystarczajaca ilosc symbol < 1")
-        for x in self.frequencies:
-            if x < 0:
-                raise ValueError("czestosc jest ujemna - niemozliwe..")
-
+            raise ValueError()
+        for freq in self.frequencies:
+            if freq < 0:
+                raise ValueError()
         self.total = sum(self.frequencies)
         self.cumulative = None
 
-    def symbolLimes(self):
+    def getSymbolLim(self):
         return len(self.frequencies)
 
     def get(self, symbol):
         self.inspectSymbol(symbol)
         return self.frequencies[symbol]
 
-    def set(self, symbol, frequency):
+    def set(self, symbol, freq):
         self.inspectSymbol(symbol)
-        if frequency < 0:
-            raise ValueError("czestosc ujemna - niemozliwe..")
+        if freq < 0:
+            raise ValueError()
         temp = self.total - self.frequencies[symbol]
         assert temp >= 0
-        self.total = temp + frequency
-        self.frequencies[symbol] = frequency
+        self.total = temp + freq
+        self.frequencies[symbol] = freq
         self.cumulative = None
 
     def increment(self, symbol):
@@ -167,131 +168,129 @@ class SimpleFrequencyTable(FrequencyTable):
     def getLow(self, symbol):
         self.inspectSymbol(symbol)
         if self.cumulative is None:
-            self._init_cumulative()
+            self.checkCumulative()
         return self.cumulative[symbol]
 
     def getHigh(self, symbol):
         self.inspectSymbol(symbol)
         if self.cumulative is None:
-            self._init_cumulative()
+            self.checkCumulative()
         return self.cumulative[symbol + 1]
 
-    def _init_cumulative(self):
-        c = [0]
-        res = 0
-        for x in self.frequencies:
-            res += x
-            c.append(res)
-        assert res == self.total
-        self.cumulative = c
+    def checkCumulative(self):
+        result = [0]
+        s = 0
+        for freq in self.frequencies:
+            s += freq
+            result.append(s)
+        assert s == self.total
+        self.cumulative = result
 
     def inspectSymbol(self, symbol):
         if 0 <= symbol < len(self.frequencies):
             return
         else:
-            raise ValueError("symbol poza zasiegiem")
+            raise ValueError()
 
 
-class CheckedFrequencyTable(FrequencyTable):
-    def __init__(self, tab):
-        self.frequencyTable = tab
+class CheckedFrequencyTable(AbstractTable):
 
-    def symbolLimes(self):
-        result = self.frequencyTable.symbolLimes()
+    def __init__(self, table):
+        self.frequencyTable = table
+
+    def getSymbolLim(self):
+        result = self.frequencyTable.getSymbolLim()
         if result <= 0:
-            raise AssertionError("symbol limit =<0")
+            raise AssertionError()
         return result
 
     def get(self, symbol):
         result = self.frequencyTable.get(symbol)
-        if not self.checkRange(symbol):
-            raise AssertionError("val err sb")
+        if not self.validateSymbol(symbol):
+            raise AssertionError()
         if result < 0:
-            raise AssertionError("ujemna czestosc symbolu")
+            raise AssertionError()
         return result
 
     def getTotal(self):
         result = self.frequencyTable.getTotal()
         if result < 0:
-            raise AssertionError("total ujemna czestosc")
+            raise AssertionError()
         return result
 
     def getLow(self, symbol):
-        if self.checkRange(symbol):
+        if self.validateSymbol(symbol):
             low = self.frequencyTable.getLow(symbol)
             high = self.frequencyTable.getHigh(symbol)
             if not (0 <= low <= high <= self.frequencyTable.getTotal()):
-                raise AssertionError("symb low cum freq poza zasiegiem")
+                raise AssertionError()
             return low
         else:
             self.frequencyTable.getLow(symbol)
-            raise AssertionError("val err sb")
+            raise AssertionError()
 
     def getHigh(self, symbol):
-        if self.checkRange(symbol):
+        if self.validateSymbol(symbol):
             low = self.frequencyTable.getLow(symbol)
             high = self.frequencyTable.getHigh(symbol)
             if not (0 <= low <= high <= self.frequencyTable.getTotal()):
-                raise AssertionError("poza zasiegiem sym high cum freq ")
+                raise AssertionError()
             return high
         else:
             self.frequencyTable.getHigh(symbol)
-            raise AssertionError("val err sb")
+            raise AssertionError()
 
-    def set(self, symbol, freq):
-        self.frequencyTable.set(symbol, freq)
-        if not self.checkRange(symbol) or freq < 0:
-            raise AssertionError("val err sb")
+    def set(self, symbol, frequency):
+        self.frequencyTable.set(symbol, frequency)
+        if not self.validateSymbol(symbol) or frequency < 0:
+            raise AssertionError()
 
     def increment(self, symbol):
         self.frequencyTable.increment(symbol)
-        if not self.checkRange(symbol):
-            raise AssertionError("val err sb")
+        if not self.validateSymbol(symbol):
+            raise AssertionError()
 
-    def checkRange(self, symbol):
-        return 0 <= symbol < self.symbolLimes()
+    def validateSymbol(self, symbol):
+        return 0 <= symbol < self.getSymbolLim()
 
 
 class Base:
-    def __init__(self, numBits):
-        if numBits < 1:
-            raise ValueError("nb musi byc wieksze niz 1!")
-        self.numStateBits = numBits
-        self.segment = 1 << self.numStateBits
+    def __init__(self, value):
+        if value < 1:
+            raise ValueError()
+        self.stateBits = value
+        self.segment = 1 << self.stateBits
         self.segmentHalf = self.segment >> 1
         self.segmentQuarter = self.segmentHalf >> 1
-        self.minRange = self.segmentQuarter + 2
-        self.maxTotal = self.minRange
-        self.stateMask = self.segment - 1
+        self.minScope = self.segmentQuarter + 2
+        self.maxTotal = self.minScope
+        self.sMask = self.segment - 1
         self.low = 0
-        self.high = self.stateMask
+        self.high = self.sMask
 
     def update(self, frequencies, symbol):
         low = self.low
         high = self.high
-        if low >= high or (low & self.stateMask) != low or (high & self.stateMask) != high:
-            raise AssertionError("lims poza zasiegiem")
+        if low >= high or (low & self.sMask) != low or (high & self.sMask) != high:
+            raise AssertionError()
         scope = high - low + 1
-        if not (self.minRange <= scope <= self.segment):
-            raise AssertionError("wyznaczony scope poza zasiegiem")
+        if not (self.minScope <= scope <= self.segment):
+            raise AssertionError()
         total = frequencies.getTotal()
         symbolLowLim = frequencies.getLow(symbol)
         symbolHighLim = frequencies.getHigh(symbol)
         if symbolLowLim == symbolHighLim:
-            raise ValueError("symbol ma czestosc rowna 0 ?")
+            raise ValueError()
         if total > self.maxTotal:
-            raise ValueError("total jest za duzy")
-
+            raise ValueError()
         newSymbolLowLim = low + symbolLowLim * scope // total
         newSymbolHighLim = low + symbolHighLim * scope // total - 1
         self.low = newSymbolLowLim
         self.high = newSymbolHighLim
-
         while ((self.low ^ self.high) & self.segmentHalf) == 0:
             self.shift()
-            self.low = ((self.low << 1) & self.stateMask)
-            self.high = ((self.high << 1) & self.stateMask) | 1
-
+            self.low = ((self.low << 1) & self.sMask)
+            self.high = ((self.high << 1) & self.sMask) | 1
         while (self.low & ~self.high & self.segmentQuarter) != 0:
             self.underflow()
             self.low = (self.low << 1) ^ self.segmentHalf
@@ -305,10 +304,10 @@ class Base:
 
 
 class Encoder(Base):
-    def __init__(self, numBits, OutBit):
-        super(Encoder, self).__init__(numBits)
-        self.output = OutBit
-        self.numUnderFlow = 0
+    def __init__(self, value, outBit):
+        super(Encoder, self).__init__(value)
+        self.output = outBit
+        self.numUnderflow = 0
 
     def write(self, frequencies, symbol):
         if not isinstance(frequencies, CheckedFrequencyTable):
@@ -316,27 +315,74 @@ class Encoder(Base):
         self.update(frequencies, symbol)
 
     def finish(self):
-        self.output.push(1)
+        self.output.write(1)
 
     def shift(self):
-        bit = self.low >> (self.numStateBits - 1)
-        self.output.push(bit)
-        for _ in range(self.numUnderFlow):
-            self.output.push(bit ^ 1)
-        self.numUnderFlow = 0
+        bit = self.low >> (self.stateBits - 1)
+        self.output.write(bit)
+
+        for _ in range(self.numUnderflow):
+            self.output.write(bit ^ 1)
+        self.numUnderflow = 0
 
     def underflow(self):
-        self.numUnderFlow += 1
+        self.numUnderflow += 1
+
+
+class Decoder(Base):
+    def __init__(self, value, inBit):
+        super(Decoder, self).__init__(value)
+        self.input = inBit
+        self.code = 0
+        for _ in range(self.stateBits):
+            self.code = self.code << 1 | self.read_code_bit()
+
+    def read(self, frequencies):
+        if not isinstance(frequencies, CheckedFrequencyTable):
+            frequencies = CheckedFrequencyTable(frequencies)
+        total = frequencies.getTotal()
+        if total > self.maxTotal:
+            raise ValueError()
+        scope = self.high - self.low + 1
+        offset = self.code - self.low
+        value = ((offset + 1) * total - 1) // scope
+        assert value * scope // total <= offset
+        assert 0 <= value < total
+        begin = 0
+        end = frequencies.getSymbolLim()
+        while end - begin > 1:
+            m = (begin + end) >> 1
+            if frequencies.getLow(m) > value:
+                end = m
+            else:
+                begin = m
+        assert begin + 1 == end
+        symbol = begin
+        assert frequencies.getLow(symbol) * scope // total <= offset < frequencies.getHigh(symbol) * scope // total
+        self.update(frequencies, symbol)
+        if not (self.low <= self.code <= self.high):
+            raise AssertionError()
+        return symbol
+
+    def shift(self):
+        self.code = ((self.code << 1) & self.sMask) | self.read_code_bit()
+
+    def underflow(self):
+        self.code = (self.code & self.segmentHalf) | ((self.code << 1) & (self.sMask >> 1)) | self.read_code_bit()
+
+    def read_code_bit(self):
+        temp = self.input.read()
+        if temp == -1:
+            temp = 0
+        return temp
 
 
 def encode(args):
-    if len(args) < 2:
-        sys.exit("[in,out]")
     inputFile, outputFile = args
     with open(inputFile, "rb") as inp, \
             contextlib.closing(Pusher(open(outputFile, "wb"))) as outBit:
         initialFrequencies = FlatFrequencyTable(257)
-        frequencies = SimpleFrequencyTable(initialFrequencies)
+        frequencies = FrequencyTable(initialFrequencies)
         enc = Encoder(32, outBit)
         while True:
             symbol = inp.read(1)
@@ -348,70 +394,18 @@ def encode(args):
         enc.finish()
 
 
-class Decoder(Base):
-    def __init__(self, numBits, bitIn):
-        super(Decoder, self).__init__(numBits)
-        self.input = bitIn
-        self.code = 0
-        for _ in range(self.numStateBits):
-            self.code = self.code << 1 | self.readCodedBit()
-
-    def read(self, frequencies):
-        if not isinstance(frequencies, CheckedFrequencyTable):
-            frequencies = CheckedFrequencyTable(frequencies)
-        total = frequencies.getTotal()
-        if total > self.maxTotal:
-            raise ValueError("symbol total wieksza niz mmax")
-        scope = self.high - self.low + 1
-        offset = self.code - self.low
-        value = ((offset + 1) * total - 1) // scope
-        assert value * scope // total <= offset
-        assert 0 <= value < total
-
-        start = 0
-        end = frequencies.symbolLimes()
-        while end - start > 1:
-            middle = (start + end) >> 1
-            if frequencies.getLow(middle) > value:
-                end = middle
-            else:
-                start = middle
-        assert start + 1 == end
-
-        symbol = start
-        assert frequencies.getLow(symbol) * scope // total <= offset < frequencies.getHigh(symbol) * scope // total
-        self.update(frequencies, symbol)
-        if not (self.low <= self.code <= self.high):
-            raise AssertionError("kod poza zasiegiem")
-        return symbol
-
-    def shift(self):
-        self.code = ((self.code << 1) & self.stateMask) | self.readCodedBit()
-
-    def underflow(self):
-        self.code = (self.code & self.segmentHalf) | ((self.code << 1) & (self.stateMask >> 1)) | self.readCodedBit()
-
-    def readCodedBit(self):
-        temp = self.input.pull()
-        if temp == -1:
-            temp = 0
-        return temp
-
-
 def decode(args):
-    if len(args) < 2:
-        sys.exit("[in,out]")
     inputFile, outputFile = args
-    with open(inputFile, "rb") as x, open(outputFile, "wb") as y:
-        BitIn = Puller(x)
+    with open(inputFile, "rb") as inp, open(outputFile, "wb") as out:
+        inBit = Puller(inp)
         initialFrequencies = FlatFrequencyTable(257)
-        frequencies = SimpleFrequencyTable(initialFrequencies)
-        dec = Decoder(32, BitIn)
+        frequencies = FrequencyTable(initialFrequencies)
+        dec = Decoder(32, inBit)
         while True:
             symbol = dec.read(frequencies)
             if symbol == 256:
                 break
-            y.write(bytes((symbol,)))
+            out.write(bytes((symbol,)))
             frequencies.increment(symbol)
 
 
@@ -458,11 +452,13 @@ def getInformation(filepath):
     print("Average codeword length of compressed: ", sizeCompressed / compressedSymbolsQuantity)
 
 
-def main():
-    filepath = "/home/piotr/Documents/data-compression-and-coding/Tests/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt"
+def main(filepath):
+    if len(sys.argv) < 1:
+        filepath = "/home/piotr/Documents/data-compression-and-coding/" \
+                   "Tests/pan-tadeusz-czyli-ostatni-zajazd-na-litwie.txt "
     encode([filepath, "code"])
     decode(["code", "decode"])
     getInformation(filepath)
 
 
-main()
+main(sys.argv[1])

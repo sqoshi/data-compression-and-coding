@@ -1,6 +1,6 @@
 package IndexesCoding;
 
-public class EliasGamma implements Elias {
+public class EliasGamma implements Coding {
 
     @Override
     public int decode(String value) {

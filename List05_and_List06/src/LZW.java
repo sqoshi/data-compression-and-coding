@@ -42,7 +42,7 @@ public class LZW {
 
 
     public static String decompress(List<Integer> compressed) throws IOException {
-        FileOutputStream fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/decode"));
+        FileOutputStream fos = new FileOutputStream(new File("src/Data/decode"));
         int dictSize = 257;
         Map<Integer, String> dictionary = new HashMap<Integer, String>();
         for (int i = 0; i < 256; i++)

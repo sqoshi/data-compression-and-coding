@@ -1,6 +1,6 @@
 package IndexesCoding;
 
-public class EliasDelta implements Elias {
+public class EliasDelta implements Coding {
 
 
     @Override
@@ -16,8 +16,9 @@ public class EliasDelta implements Elias {
         String nplus1 = (value.substring(0, L + 1 + L));
         int N = (Integer.parseInt(nplus1, 2)) - 1;
         int rest = 0;
-        if ((!value.substring(L + 1 + L, 2 * L + 1 + N).equals("")))
-            rest = Integer.parseInt(value.substring(L + 1 + L, 2 * L + 1 + N), 2);
+        String temp = value.substring(L + 1 + L, 2 * L + 1 + N);
+        if ((!temp.equals("")))
+            rest = Integer.parseInt(temp, 2);
 
         MyBuffer.nextVal = value.substring(2 * L + 1 + N);
         if (value.substring(2 * L + 1 + N).length() == 0)

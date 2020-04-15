@@ -1,6 +1,6 @@
 package IndexesCoding;
 
-public class EliasOmega implements Elias {
+public class EliasOmega implements Coding {
     @Override
     public String encode(int number) {
         StringBuilder stb = new StringBuilder();

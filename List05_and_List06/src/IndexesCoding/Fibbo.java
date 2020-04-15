@@ -3,16 +3,7 @@ package IndexesCoding;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Fibbo implements Elias {
-    public static void main(String[] args) {
-        Elias elias = new Fibbo();
-        elias.encode(12);
-        System.out.println("101100000110000011010011");
-        elias.decode("101100000110000011010011");
-        while (MyBuffer.nextVal != null) {
-            elias.decode(MyBuffer.getNextVal());
-        }
-    }
+public class Fibbo implements Coding {
 
     private static long getFibByIndex(long n) {
         long a = 0, b = 1, c = 0;

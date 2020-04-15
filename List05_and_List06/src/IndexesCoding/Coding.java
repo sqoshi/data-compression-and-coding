@@ -1,6 +1,6 @@
 package IndexesCoding;
 
-public interface Elias {
+public interface Coding {
     int decode(String value);
 
     String encode(int number);

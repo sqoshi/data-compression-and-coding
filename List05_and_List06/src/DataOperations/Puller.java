@@ -1,7 +1,7 @@
 package DataOperations;
 
 import IndexesCoding.Chooser;
-import IndexesCoding.Elias;
+import IndexesCoding.Coding;
 import IndexesCoding.MyBuffer;
 
 import java.io.File;
@@ -13,10 +13,10 @@ import java.util.List;
 
 public class Puller {
     FileInputStream fileInputStream;
-    Elias type;
+    Coding type;
 
     public Puller(String name) throws FileNotFoundException {
-        fileInputStream = new FileInputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
+        fileInputStream = new FileInputStream(new File("src/Data/code"));
         type = Chooser.choose(name);
     }
 

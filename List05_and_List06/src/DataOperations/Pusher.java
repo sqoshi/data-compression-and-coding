@@ -1,7 +1,7 @@
 package DataOperations;
 
 import IndexesCoding.Chooser;
-import IndexesCoding.Elias;
+import IndexesCoding.Coding;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -11,7 +11,7 @@ import java.io.IOException;
 public class Pusher {
     FileOutputStream fos;
     String queue;
-    Elias type;
+    Coding type;
 
     public Pusher(String name) throws FileNotFoundException {
         fos = new FileOutputStream(new File("/home/piotr/Documents/data-compression-and-coding/List05_and_List06/src/Data/code"));
