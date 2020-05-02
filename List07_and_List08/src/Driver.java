@@ -32,39 +32,52 @@ public class Driver {
         return board;
     }
 
-    public static void displayResults(int[] b) throws IllegalAccessException {
-        System.out.println("Full= " + Entropy.calculateFullEntropy(b));
-        System.out.println("B= " + Entropy.calculateComponentEntropy('B', b));
-        System.out.println("G= " + Entropy.calculateComponentEntropy('G', b));
-        System.out.println("R= " + Entropy.calculateComponentEntropy('R', b));
-        System.out.println();
+    public static void displayResults(int c, int[] b) throws IllegalAccessException {
+        if (c != 0)
+            System.out.printf("%-10s %-20s %-20s %-20s %-20s %-1s\n", "| Scheme ".concat(String.valueOf(c)), Entropy.calculateFullEntropy(b),
+                    Entropy.calculateComponentEntropy('B', b), Entropy.calculateComponentEntropy('G', b), Entropy.calculateComponentEntropy('R', b), "|");
+        else
+            System.out.printf("%-10s %-20s %-20s %-20s %-20s %-1s\n", "| File", Entropy.calculateFullEntropy(b),
+                    Entropy.calculateComponentEntropy('B', b), Entropy.calculateComponentEntropy('G', b), Entropy.calculateComponentEntropy('R', b), "|");
     }
 
     public static void main(String[] args) throws IOException, IllegalAccessException {
-        for (int outer = 0; outer < 4; outer++) {
-            int[] data = Reader.read("/home/piotr/Documents/data-compression-and-coding/Tests/images/example" + outer + ".tga");
-            int h = Reader.getHeight();
-            int w = Reader.getWidth();
-            createBoard(data, h, w);
-            //displayResults(data);
+        printSchemes();
+        for (String filename : args) {
+            System.out.println(filename);
+            int[] data = Reader.read(filename);
             List<Double> imageResultListFull = new ArrayList<>(), imageResultListBlue = new ArrayList<>(), imageResultListGreen = new ArrayList<>(), imageResultListRed = new ArrayList<>();
+            int h = Reader.getHeight(), w = Reader.getWidth();
+            createBoard(data, h, w);
+            displayResults(0, data);
+            System.out.println("------------------------------------------------------------------------------------------------");
             for (int i = 1; i < 9; i++) {
                 int[][][] diff_board = build(i);
-                int[] predicted_array = convert3DtoArray(diff_board);
-                //displayResults(predicted_array);
-                imageResultListFull.add(Entropy.calculateFullEntropy(predicted_array));
-                imageResultListBlue.add(Entropy.calculateComponentEntropy('B', predicted_array));
-                imageResultListGreen.add(Entropy.calculateComponentEntropy('G', predicted_array));
-                imageResultListRed.add(Entropy.calculateComponentEntropy('R', predicted_array));
+                int[] diffArray = convert3DtoArray(diff_board);
+                displayResults(i, diffArray);
+                imageResultListFull.add(Entropy.calculateFullEntropy(diffArray));
+                imageResultListBlue.add(Entropy.calculateComponentEntropy('B', diffArray));
+                imageResultListGreen.add(Entropy.calculateComponentEntropy('G', diffArray));
+                imageResultListRed.add(Entropy.calculateComponentEntropy('R', diffArray));
             }
             System.out.println("------------------------------------------------------------------------------------------------");
-            System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "Best", "Full", "Blue", "Green", "Red");
-            System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "Minimal", Collections.min(imageResultListFull), Collections.min(imageResultListBlue), Collections.min(imageResultListGreen), Collections.min(imageResultListRed));
-            System.out.printf("%-10s %-20s %-20s %-20s %-20s\n", "Index", imageResultListFull.indexOf(Collections.min(imageResultListFull)) + 1, 1 + imageResultListBlue.indexOf(Collections.min(imageResultListBlue)), 1 + imageResultListGreen.indexOf(Collections.min(imageResultListGreen)), 1 + imageResultListRed.indexOf(Collections.min(imageResultListRed)));
-            System.out.println("------------------------------------------------------------------------------------------------");
+
+            printSummary(imageResultListFull, imageResultListBlue, imageResultListGreen, imageResultListRed);
         }
+
     }
 
+    public static void printSummary(List<Double> imageResultListFull, List<Double> imageResultListBlue,
+                                    List<Double> imageResultListGreen, List<Double> imageResultListRed) {
+        System.out.println("-----------------------------------------Summary------------------------------------------------");
+        System.out.printf("%-10s %-20s %-20s %-20s %-20s %-1s\n", "| Best", "Full", "Blue", "Green", "Red", "|");
+        System.out.printf("%-10s %-20s %-20s %-20s %-20s %-1s\n", "| Minimal", Collections.min(imageResultListFull), Collections.min(imageResultListBlue)
+                , Collections.min(imageResultListGreen), Collections.min(imageResultListRed), "|");
+        System.out.printf("%-10s %-20s %-20s %-20s %-20s %-1s\n", "| Index", 1 + imageResultListFull.indexOf(Collections.min(imageResultListFull)), 1 + imageResultListBlue.indexOf(Collections.min(imageResultListBlue)),
+                1 + imageResultListGreen.indexOf(Collections.min(imageResultListGreen)), 1 + imageResultListRed.indexOf(Collections.min(imageResultListRed)), "|");
+        System.out.println("------------------------------------------------------------------------------------------------");
+        System.out.println();
+    }
 
     public static int[][][] build(int scheme) {
         int h = board.length, w = board[0].length, d = board[0][0].length;
@@ -129,6 +142,23 @@ public class Driver {
         return getBoard()[r][c];
     }
 
+    public static void printSchemes() {
+        System.out.println("------------------------------------------------------------------------------------------------");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 1 ", "W", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 2 ", "N", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 3 ", "NW", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 4 ", "N + W - NW", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 5 ", "N + (W - NW)/2", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 6 ", "W + (N - NW)/2", "|");
+        System.out.printf("%-10s %-82s %-1s\n", "| Scheme 7 ", "(N + W)/2", "|");
+        System.out.printf("%-10s %-20s  %-61s %-1s\n", "| Scheme 8", "[ min(N,W)", "if NW>=max(A,B)", "|");
+        System.out.printf("%-10s %-20s  %-61s %-1s\n", "| ", "[ max(N,W)", "if NW<=min(A,B)", "|");
+        System.out.printf("%-10s %-20s  %-61s %-1s\n", "| ", "[ N + W - NW", "else", "|");
+        System.out.println("------------------------------------------------------------------------------------------------");
+
+
+    }
+
     public static int[] decide(int scheme, int r, int c) {
         int[] zeros = new int[3];
         if (scheme == 1) {
@@ -146,7 +176,7 @@ public class Driver {
         } else if (scheme == 5) {
             for (int i = 0; i < 3; i++) {
                 zeros[i] =
-                        control(getW(r, c)[i] + (getW(r, c)[i] - getNW(r, c)[i]) / 2);
+                        control(getN(r, c)[i] + (getW(r, c)[i] - getNW(r, c)[i]) / 2);
             }
             return zeros;
         } else if (scheme == 6) {
