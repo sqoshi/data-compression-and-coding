@@ -15,10 +15,10 @@ public class Entropy {
         return start;
     }
 
-    public static double calculateFullEntropy(byte[] bitMap) {
+    public static double calculateFullEntropy(int[] bitMap) {
         int SymbolsQuantity = 1;
-        Map<Byte, Integer> symbols = new HashMap<>();
-        for (byte c : bitMap) {
+        Map<Integer, Integer> symbols = new HashMap<>();
+        for (int c : bitMap) {
             SymbolsQuantity++;
             if (!symbols.containsKey(c)) {
                 symbols.put(c, 1);
@@ -29,13 +29,14 @@ public class Entropy {
         return computeEntropy(symbols, SymbolsQuantity);
     }
 
-    public static double calculateComponentEntropy(char color, byte[] bitMap) throws IllegalAccessException {
+    public static double calculateComponentEntropy(char color, int[] bitMap) throws IllegalAccessException {
         int start = chooseStartIndex(color);
         int SymbolsQuantity = 1;
-        Map<Byte, Integer> symbols = new HashMap<>();
+        Map<Integer, Integer> symbols = new HashMap<>();
         for (int i = start; i < bitMap.length; i += 3) {
-            byte c = bitMap[i];
+            int c = (bitMap[i]);
             SymbolsQuantity++;
+
             if (!symbols.containsKey(c)) {
                 symbols.put(c, 1);
             } else {
@@ -45,10 +46,10 @@ public class Entropy {
         return computeEntropy(symbols, SymbolsQuantity);
     }
 
-    private static double computeEntropy(Map<Byte, Integer> symbols, int size) {
+    private static double computeEntropy(Map<Integer, Integer> symbols, int size) {
         double H = 0.0;
-        double Pi = 0.0;
-        for (Map.Entry<Byte, Integer> entry : symbols.entrySet()) {
+        double Pi;
+        for (Map.Entry<Integer, Integer> entry : symbols.entrySet()) {
             Pi = (double) entry.getValue() / size;
             H += Pi * Math.log(1.0 / Pi) / Math.log(2.0);
         }
