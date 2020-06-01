@@ -2,10 +2,7 @@ import random
 import sys
 from array import *
 
-
-def opposite(val):
-    return '1' if val == '0' else '0'
-
+from Hamming import *
 
 if __name__ == '__main__':
     if len(sys.argv) < 4:

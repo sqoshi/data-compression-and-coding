@@ -1,35 +1,7 @@
 import sys
 from array import *
 
-import numpy as np
-
-
-def swap(val):
-    return 1 if val == 0 else 0
-
-
-H = np.array([[0, 1, 1, 1, 1, 0, 0, 0],
-              [1, 0, 1, 1, 0, 1, 0, 0],
-              [1, 1, 0, 1, 0, 0, 1, 0],
-              [1, 1, 1, 0, 0, 0, 0, 1]])
-G = np.array([[swap(x) for x in row] for row in H])
-test_msg4 = np.array([1, 0, 1, 1])
-
-
-def swap(val):
-    return 1 if val == 0 else 0
-
-
-class Buffer:
-    def __init__(self, output_file, max_size=8):
-        self.max_size = max_size
-        self.bytes = list()
-        self.filename = output_file
-
-    def write(self, data):
-        self.bytes.append(data)
-        if len(self.bytes) >= 8:
-            print('writing')
+from Hamming import *
 
 
 def bitstring_to_bytes(s):

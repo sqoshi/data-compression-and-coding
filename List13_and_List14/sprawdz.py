@@ -15,5 +15,4 @@ if __name__ == '__main__':
             counter += 1
         if bin(b1)[4:] != bin(b2)[4:]:
             counter += 1
-
     print(counter)
