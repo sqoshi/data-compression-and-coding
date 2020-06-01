@@ -29,4 +29,4 @@ if __name__ == '__main__':
             bin_arr.append(int(bytes_builder, 2))
             bytes_builder = ''
     bin_arr.tofile(output_data)
-    print(error_counter)
+    print('Double errors: ', error_counter)

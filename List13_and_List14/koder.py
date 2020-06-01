@@ -23,5 +23,5 @@ if __name__ == '__main__':
         bin_arr.append(int(''.join([str(b) for b in np.mod(left.dot(G), 2)]), 2))
         bin_arr.append(int(''.join([str(b) for b in np.mod(right.dot(G), 2)]), 2))
     bin_arr.tofile(output_data)
-    print(output_data.__sizeof__())
-    print(input_data.__sizeof__())
+    # print(output_data.__sizeof__())
+    # print(input_data.__sizeof__())

@@ -24,4 +24,4 @@ if __name__ == '__main__':
             que.append(y)
         bin_arr.append(int(''.join(que), 2))
     bin_arr.tofile(output_data)
-    print(input_data.__sizeof__(), output_data.__sizeof__(), all, changes)
+    #print(input_data.__sizeof__(), output_data.__sizeof__(), all, changes)
