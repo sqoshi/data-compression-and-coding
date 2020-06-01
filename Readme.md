@@ -57,14 +57,15 @@ vector quantization of colors.
 - program using _Linnd-Buz-Gray_ algorithm to get needed quantity colors
 # List 11 && 12
 - Program decodes and encodes image in TGA format. 
-- k ->  bits quantity of quantizer
+- k ->  bits quantity of quantizer -> quantization
 - calculate for output and input image:
      - mean square error
      - signal to noise ratio
 - for each color using lowpass and uppass filter that is later
+- differential coding
 coded  respecitvely differentially and uneven
 # List 13 && 14
-- 4 subprograms:
+- 4 subprograms in python:
     - encoder extended Hamming Code(8,4) in->out
     - noiser changes each bit with with probability p to opposed bit
     - decoder extended Hamming Code(8,4) serves info with cases that he found 2 errors
