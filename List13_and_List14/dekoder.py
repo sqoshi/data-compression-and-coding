@@ -4,6 +4,8 @@ from array import *
 from Hamming import *
 
 if __name__ == '__main__':
+    """Decodes inputed encoded in Hamming 8,4 encoded file"""
+
     if len(sys.argv) < 3:
         sys.stderr.write('Not enough arguments, example use: \n \t python3 dekoder.py in out')
         sys.exit()

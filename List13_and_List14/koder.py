@@ -5,10 +5,20 @@ from Hamming import *
 
 
 def bitstring_to_bytes(s):
+    """
+    Changes binary string to  int bytes
+    :param s:
+    :return:
+    """
     return int(s, 2).to_bytes(len(s) // 8, byteorder='big')
 
 
-if __name__ == '__main__':
+def main():
+    """
+    Encodes file using Hamming 8,4 codes.
+    :return:
+    """
+
     if len(sys.argv) < 3:
         sys.stderr.write('Not enough arguments, example use: \n \t python3 koder.py in out')
         sys.exit()
@@ -25,3 +35,6 @@ if __name__ == '__main__':
     bin_arr.tofile(output_data)
     # print(output_data.__sizeof__())
     # print(input_data.__sizeof__())
+
+
+main()

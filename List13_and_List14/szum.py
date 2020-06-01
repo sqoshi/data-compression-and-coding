@@ -4,7 +4,13 @@ from array import *
 
 from Hamming import *
 
-if __name__ == '__main__':
+
+def main():
+    """
+    Simulates data loss as changing all bits with probability p to opposite bit (one by one).
+    :return:
+    """
+
     if len(sys.argv) < 4:
         sys.stderr.write('Not enough arguments, example use: \n \t python3 szum.py p in out')
         sys.exit()
@@ -24,4 +30,7 @@ if __name__ == '__main__':
             que.append(y)
         bin_arr.append(int(''.join(que), 2))
     bin_arr.tofile(output_data)
-    #print(input_data.__sizeof__(), output_data.__sizeof__(), all, changes)
+    # print(input_data.__sizeof__(), output_data.__sizeof__(), all, changes)
+
+
+main()

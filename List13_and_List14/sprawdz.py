@@ -1,7 +1,13 @@
 import sys
 from array import *
 
-if __name__ == '__main__':
+
+def main():
+    """
+    Checks on how many 4 length blocks inputted files are different.
+    :return:
+    """
+
     if len(sys.argv) < 3:
         sys.stderr.write('Not enough arguments, example use: \n \t python3 sprawdz.py in1 in2')
         sys.exit()
@@ -16,3 +22,6 @@ if __name__ == '__main__':
         if bin(b1)[4:] != bin(b2)[4:]:
             counter += 1
     print('Not identical blocks:', counter)
+
+
+main()
