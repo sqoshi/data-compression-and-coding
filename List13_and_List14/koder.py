@@ -38,11 +38,10 @@ def bitstring_to_bytes(s):
 
 if __name__ == '__main__':
     if len(sys.argv) < 3:
-        sys.stderr.write('Not enough arguments, example use: \n \t python3 koder in out')
+        sys.stderr.write('Not enough arguments, example use: \n \t python3 koder.py in out')
         sys.exit()
     file_in, file_out = sys.argv[1], sys.argv[2]
     input_data = open(file_in, "rb").read()
-
     output_data = open(file_out, "wb")
     bin_arr = array('B')
     for byte in input_data:
