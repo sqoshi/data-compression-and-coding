@@ -3,9 +3,12 @@ from array import *
 
 from Hamming import *
 
-if __name__ == '__main__':
-    """Decodes inputed encoded in Hamming 8,4 encoded file"""
 
+def main():
+    """
+    Decodes inputed encoded in Hamming 8,4 encoded file
+    :return:
+    """
     if len(sys.argv) < 3:
         sys.stderr.write('Not enough arguments, example use: \n \t python3 dekoder.py in out')
         sys.exit()
@@ -32,3 +35,6 @@ if __name__ == '__main__':
             bytes_builder = ''
     bin_arr.tofile(output_data)
     print('Double errors: ', error_counter)
+
+
+main()
